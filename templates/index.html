@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>文档对比工具 | Document Comparator</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Raleway:wght@300;400;700;900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="noise-overlay"></div>
+    
+    <div class="container">
+        <header class="header">
+            <div class="logo">
+                <span class="logo-symbol">⟨</span>
+                <span class="logo-text">DIFF</span>
+                <span class="logo-symbol">⟩</span>
+            </div>
+            <h1 class="title">文档对比工具</h1>
+            <p class="subtitle">精确对比，差异尽显</p>
+        </header>
+
+        <main class="main">
+            <div class="input-section">
+                <div class="text-input-container">
+                    <div class="input-wrapper">
+                        <div class="input-header">
+                            <span class="input-label">原文档</span>
+                            <div class="file-upload">
+                                <input type="file" id="file1" accept=".txt,.md,.json,.html,.css,.js,.py">
+                                <label for="file1">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                        <polyline points="17 8 12 3 7 8"></polyline>
+                                        <line x1="12" y1="3" x2="12" y2="15"></line>
+                                    </svg>
+                                    上传文件
+                                </label>
+                            </div>
+                        </div>
+                        <textarea id="text1" placeholder="在此输入原文档内容..."></textarea>
+                    </div>
+                    
+                    <div class="input-wrapper">
+                        <div class="input-header">
+                            <span class="input-label">新文档</span>
+                            <div class="file-upload">
+                                <input type="file" id="file2" accept=".txt,.md,.json,.html,.css,.js,.py">
+                                <label for="file2">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                        <polyline points="17 8 12 3 7 8"></polyline>
+                                        <line x1="12" y1="3" x2="12" y2="15"></line>
+                                    </svg>
+                                    上传文件
+                                </label>
+                            </div>
+                        </div>
+                        <textarea id="text2" placeholder="在此输入新文档内容..."></textarea>
+                    </div>
+                </div>
+
+                <div class="action-bar">
+                    <button id="compareBtn" class="compare-btn">
+                        <span class="btn-icon">↔</span>
+                        <span class="btn-text">开始对比</span>
+                    </button>
+                    <button id="swapBtn" class="swap-btn">
+                        <span class="btn-icon">⇄</span>
+                        <span class="btn-text">交换文档</span>
+                    </button>
+                    <button id="clearBtn" class="clear-btn">
+                        <span class="btn-icon">✕</span>
+                        <span class="btn-text">清空</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="results-section" id="resultsSection" style="display: none;">
+                <div class="stats-bar">
+                    <div class="stat-item">
+                        <span class="stat-label">相似度</span>
+                        <span class="stat-value" id="similarityValue">0%</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">差异数量</span>
+                        <span class="stat-value" id="changesCount">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">原文档字符</span>
+                        <span class="stat-value" id="text1Length">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">新文档字符</span>
+                        <span class="stat-value" id="text2Length">0</span>
+                    </div>
+                </div>
+
+                <div class="diff-container">
+                    <div class="diff-panel">
+                        <div class="diff-header">
+                            <span class="diff-label">原文档</span>
+                            <div class="legend">
+                                <span class="legend-item removed">
+                                    <span class="legend-box"></span>
+                                    删除
+                                </span>
+                            </div>
+                        </div>
+                        <div class="diff-content" id="diff1"></div>
+                    </div>
+                    <div class="diff-panel">
+                        <div class="diff-header">
+                            <span class="diff-label">新文档</span>
+                            <div class="legend">
+                                <span class="legend-item added">
+                                    <span class="legend-box"></span>
+                                    新增
+                                </span>
+                            </div>
+                        </div>
+                        <div class="diff-content" id="diff2"></div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer class="footer">
+            <p>Built with Flask & DiffLib — <span id="currentYear"></span></p>
+        </footer>
+    </div>
+
+    <script src="/static/js/script.js"></script>
+</body>
+</html>
