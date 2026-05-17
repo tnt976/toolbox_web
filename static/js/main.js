@@ -349,6 +349,7 @@ function copyResult(elementId) {
 async function encryptAES() {
     const text = document.getElementById('aesInput').value;
     const key = document.getElementById('aesKey').value;
+<<<<<<< HEAD
     const keyType = document.getElementById('aesKeyType').value;
     const mode = document.getElementById('aesMode').value;
     const padding = document.getElementById('aesPadding').value;

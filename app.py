@@ -249,16 +249,15 @@ def aes_encrypt():
     key_size = int(data.get('key_size', 128))
     encoding = data.get('encoding', 'UTF-8')
     output_format = data.get('output_format', 'Base64')
+<<<<<<< HEAD
     key_type = data.get('key_type', 'Text')
 
     try:
-        # Process key
         key_length = key_size // 8
         if key_type == 'Hex':
             key_bytes = bytes.fromhex(key_str)
         else:
             key_bytes = key_str.encode(encoding)
-        
         if len(key_bytes) < key_length:
             key_bytes = key_bytes.ljust(key_length, b'\x00')
         elif len(key_bytes) > key_length:
@@ -315,6 +314,7 @@ def aes_decrypt():
     key_size = int(data.get('key_size', 128))
     encoding = data.get('encoding', 'UTF-8')
     input_format = data.get('input_format', 'Base64')
+<<<<<<< HEAD
     key_type = data.get('key_type', 'Text')
 
     try:
