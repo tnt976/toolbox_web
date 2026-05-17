@@ -1,35 +1,34 @@
 {% extends "base.html" %}
 
-{% block title %}Home - Flask Web App{% endblock %}
+{% block title %}工具箱 - Developer Toolbox{% endblock %}
 
 {% block content %}
 <section class="hero">
     <div class="container">
-        <h1>Welcome to Flask Web App</h1>
-        <p>A simple yet powerful Python web application demonstrating modern web development best practices.</p>
-        <a href="/demo" class="btn">Try the Demo</a>
+        <h1>🧰 开发者工具箱</h1>
+        <p>实用的在线工具集合，帮助开发者快速完成日常任务</p>
     </div>
 </section>
 
 <section class="features">
     <div class="container">
-        <h2>Core Features</h2>
+        <h2>工具列表</h2>
         <div class="feature-grid">
-            <div class="feature-card">
-                <div class="feature-icon">🚀</div>
-                <h3>Fast & Lightweight</h3>
-                <p>Built with Flask, a micro web framework that's fast and easy to use.</p>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon">📱</div>
-                <h3>Responsive Design</h3>
-                <p>Works seamlessly on desktop, tablet, and mobile devices.</p>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon">🔧</div>
-                <h3>Easy to Customize</h3>
-                <p>Clean code structure that's simple to extend and modify.</p>
-            </div>
+            <a href="/tools/time" class="feature-card">
+                <div class="feature-icon">⏰</div>
+                <h3>时间工具</h3>
+                <p>时间戳与日期时间相互转换，支持不同时区</p>
+            </a>
+            <a href="/tools/encode" class="feature-card">
+                <div class="feature-icon">🔤</div>
+                <h3>编码转换</h3>
+                <p>Base64、URL、HTML实体编码与解码</p>
+            </a>
+            <a href="/tools/url" class="feature-card">
+                <div class="feature-icon">🔗</div>
+                <h3>URL工具</h3>
+                <p>URL编解码、参数解析与构建</p>
+            </a>
         </div>
     </div>
 </section>
