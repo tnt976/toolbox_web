@@ -338,10 +338,92 @@ async function decodeFullURL() {
 }
 
 function copyResult(elementId) {
-    const text = document.getElementById(elementId).textContent;
+    const text = document.getElementById(elementId).textContent || document.getElementById(elementId).value;
     navigator.clipboard.writeText(text).then(() => {
         alert('已复制到剪贴板');
     }).catch(err => {
         console.error('复制失败:', err);
     });
+}
+
+async function encryptAES() {
+    const text = document.getElementById('aesInput').value;
+    const key = document.getElementById('aesKey').value;
+    const mode = document.getElementById('aesMode').value;
+    const padding = document.getElementById('aesPadding').value;
+    const keySize = document.getElementById('aesKeySize').value;
+    const encoding = document.getElementById('aesEncoding').value;
+    const outputFormat = document.getElementById('aesFormat').value;
+
+    try {
+        const response = await fetch('/api/aes/encrypt', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                text: text,
+                key: key,
+                mode: mode,
+                padding: padding,
+                key_size: keySize,
+                encoding: encoding,
+                output_format: outputFormat
+            })
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            document.getElementById('aesOutput').value = data.result;
+        } else {
+            alert('错误: ' + data.error);
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('加密失败，请重试');
+    }
+}
+
+async function decryptAES() {
+    const text = document.getElementById('aesInput').value;
+    const key = document.getElementById('aesKey').value;
+    const mode = document.getElementById('aesMode').value;
+    const padding = document.getElementById('aesPadding').value;
+    const keySize = document.getElementById('aesKeySize').value;
+    const encoding = document.getElementById('aesEncoding').value;
+    const inputFormat = document.getElementById('aesFormat').value;
+
+    try {
+        const response = await fetch('/api/aes/decrypt', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                text: text,
+                key: key,
+                mode: mode,
+                padding: padding,
+                key_size: keySize,
+                encoding: encoding,
+                input_format: inputFormat
+            })
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            document.getElementById('aesOutput').value = data.result;
+        } else {
+            alert('错误: ' + data.error);
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('解密失败，请重试');
+    }
+}
+
+function swapAES() {
+    const input = document.getElementById('aesInput');
+    const output = document.getElementById('aesOutput');
+    const temp = input.value;
+    input.value = output.value;
+    output.value = temp;
 }

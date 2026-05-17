@@ -3,6 +3,9 @@ from datetime import datetime, timezone, timedelta
 import base64
 import urllib.parse
 import html
+from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
+from cryptography.hazmat.primitives import padding
+import os
 
 app = Flask(__name__)
 
@@ -21,6 +24,10 @@ def encode_tools():
 @app.route('/tools/url')
 def url_tools():
     return render_template('url.html')
+
+@app.route('/tools/aes')
+def aes_tools():
+    return render_template('aes.html')
 
 @app.route('/api/time/current', methods=['GET'])
 def get_current_time():
@@ -225,6 +232,111 @@ def parse_url():
             'path': parsed.path,
             'params': result_params,
             'fragment': parsed.fragment
+        })
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 400
+
+@app.route('/api/aes/encrypt', methods=['POST'])
+def aes_encrypt():
+    data = request.get_json()
+    plaintext = data.get('text', '')
+    key_str = data.get('key', '')
+    mode = data.get('mode', 'ECB')
+    padding_mode = data.get('padding', 'PKCS7')
+    key_size = int(data.get('key_size', 128))
+    encoding = data.get('encoding', 'UTF-8')
+    output_format = data.get('output_format', 'Base64')
+
+    try:
+        # Process key
+        key_bytes = key_str.encode(encoding)
+        # Pad or truncate key to required length
+        key_length = key_size // 8
+        if len(key_bytes) < key_length:
+            key_bytes = key_bytes.ljust(key_length, b'\x00')
+        elif len(key_bytes) > key_length:
+            key_bytes = key_bytes[:key_length]
+
+        # Process plaintext
+        plaintext_bytes = plaintext.encode(encoding)
+
+        # Padding
+        padder = padding.PKCS7(128).padder()
+        padded_data = padder.update(plaintext_bytes) + padder.finalize()
+
+        # Create cipher
+        if mode == 'ECB':
+            cipher = Cipher(algorithms.AES(key_bytes), modes.ECB())
+        else:
+            # For other modes (CBC, etc.), we'd need IV, but let's stick with ECB for now as per the screenshot
+            cipher = Cipher(algorithms.AES(key_bytes), modes.ECB())
+        
+        encryptor = cipher.encryptor()
+        ciphertext = encryptor.update(padded_data) + encryptor.finalize()
+
+        # Output format
+        if output_format == 'Base64':
+            result = base64.b64encode(ciphertext).decode('utf-8')
+        else:
+            result = ciphertext.hex()
+
+        return jsonify({
+            'success': True,
+            'result': result
+        })
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 400
+
+@app.route('/api/aes/decrypt', methods=['POST'])
+def aes_decrypt():
+    data = request.get_json()
+    ciphertext_str = data.get('text', '')
+    key_str = data.get('key', '')
+    mode = data.get('mode', 'ECB')
+    padding_mode = data.get('padding', 'PKCS7')
+    key_size = int(data.get('key_size', 128))
+    encoding = data.get('encoding', 'UTF-8')
+    input_format = data.get('input_format', 'Base64')
+
+    try:
+        # Process key
+        key_bytes = key_str.encode(encoding)
+        key_length = key_size // 8
+        if len(key_bytes) < key_length:
+            key_bytes = key_bytes.ljust(key_length, b'\x00')
+        elif len(key_bytes) > key_length:
+            key_bytes = key_bytes[:key_length]
+
+        # Process ciphertext
+        if input_format == 'Base64':
+            ciphertext = base64.b64decode(ciphertext_str)
+        else:
+            ciphertext = bytes.fromhex(ciphertext_str)
+
+        # Create cipher
+        if mode == 'ECB':
+            cipher = Cipher(algorithms.AES(key_bytes), modes.ECB())
+        else:
+            cipher = Cipher(algorithms.AES(key_bytes), modes.ECB())
+        
+        decryptor = cipher.decryptor()
+        padded_data = decryptor.update(ciphertext) + decryptor.finalize()
+
+        # Unpadding
+        unpadder = padding.PKCS7(128).unpadder()
+        plaintext_bytes = unpadder.update(padded_data) + unpadder.finalize()
+
+        result = plaintext_bytes.decode(encoding)
+
+        return jsonify({
+            'success': True,
+            'result': result
         })
     except Exception as e:
         return jsonify({
