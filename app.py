@@ -249,12 +249,16 @@ def aes_encrypt():
     key_size = int(data.get('key_size', 128))
     encoding = data.get('encoding', 'UTF-8')
     output_format = data.get('output_format', 'Base64')
+    key_type = data.get('key_type', 'Text')
 
     try:
         # Process key
-        key_bytes = key_str.encode(encoding)
-        # Pad or truncate key to required length
         key_length = key_size // 8
+        if key_type == 'Hex':
+            key_bytes = bytes.fromhex(key_str)
+        else:
+            key_bytes = key_str.encode(encoding)
+        
         if len(key_bytes) < key_length:
             key_bytes = key_bytes.ljust(key_length, b'\x00')
         elif len(key_bytes) > key_length:
@@ -264,20 +268,28 @@ def aes_encrypt():
         plaintext_bytes = plaintext.encode(encoding)
 
         # Padding
-        padder = padding.PKCS7(128).padder()
-        padded_data = padder.update(plaintext_bytes) + padder.finalize()
+        if padding_mode == 'ZeroPadding':
+            pad_length = key_length - (len(plaintext_bytes) % key_length)
+            if pad_length != key_length:
+                plaintext_bytes += b'\x00' * pad_length
+        else:
+            padder = padding.PKCS7(128).padder()
+            plaintext_bytes = padder.update(plaintext_bytes) + padder.finalize()
 
         # Create cipher
         if mode == 'ECB':
             cipher = Cipher(algorithms.AES(key_bytes), modes.ECB())
         else:
-            # For other modes (CBC, etc.), we'd need IV, but let's stick with ECB for now as per the screenshot
-            cipher = Cipher(algorithms.AES(key_bytes), modes.ECB())
+            iv = os.urandom(16)
+            cipher = Cipher(algorithms.AES(key_bytes), modes.CBC(iv))
         
         encryptor = cipher.encryptor()
-        ciphertext = encryptor.update(padded_data) + encryptor.finalize()
+        ciphertext = encryptor.update(plaintext_bytes) + encryptor.finalize()
 
         # Output format
+        if mode == 'CBC':
+            ciphertext = iv + ciphertext
+        
         if output_format == 'Base64':
             result = base64.b64encode(ciphertext).decode('utf-8')
         else:
@@ -303,11 +315,16 @@ def aes_decrypt():
     key_size = int(data.get('key_size', 128))
     encoding = data.get('encoding', 'UTF-8')
     input_format = data.get('input_format', 'Base64')
+    key_type = data.get('key_type', 'Text')
 
     try:
         # Process key
-        key_bytes = key_str.encode(encoding)
         key_length = key_size // 8
+        if key_type == 'Hex':
+            key_bytes = bytes.fromhex(key_str)
+        else:
+            key_bytes = key_str.encode(encoding)
+        
         if len(key_bytes) < key_length:
             key_bytes = key_bytes.ljust(key_length, b'\x00')
         elif len(key_bytes) > key_length:
@@ -319,18 +336,26 @@ def aes_decrypt():
         else:
             ciphertext = bytes.fromhex(ciphertext_str)
 
+        iv = None
+        if mode == 'CBC' and len(ciphertext) >= 16:
+            iv = ciphertext[:16]
+            ciphertext = ciphertext[16:]
+
         # Create cipher
         if mode == 'ECB':
             cipher = Cipher(algorithms.AES(key_bytes), modes.ECB())
         else:
-            cipher = Cipher(algorithms.AES(key_bytes), modes.ECB())
+            cipher = Cipher(algorithms.AES(key_bytes), modes.CBC(iv))
         
         decryptor = cipher.decryptor()
         padded_data = decryptor.update(ciphertext) + decryptor.finalize()
 
         # Unpadding
-        unpadder = padding.PKCS7(128).unpadder()
-        plaintext_bytes = unpadder.update(padded_data) + unpadder.finalize()
+        if padding_mode == 'ZeroPadding':
+            plaintext_bytes = padded_data.rstrip(b'\x00')
+        else:
+            unpadder = padding.PKCS7(128).unpadder()
+            plaintext_bytes = unpadder.update(padded_data) + unpadder.finalize()
 
         result = plaintext_bytes.decode(encoding)
 

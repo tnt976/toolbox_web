@@ -349,6 +349,7 @@ function copyResult(elementId) {
 async function encryptAES() {
     const text = document.getElementById('aesInput').value;
     const key = document.getElementById('aesKey').value;
+    const keyType = document.getElementById('aesKeyType').value;
     const mode = document.getElementById('aesMode').value;
     const padding = document.getElementById('aesPadding').value;
     const keySize = document.getElementById('aesKeySize').value;
@@ -362,6 +363,7 @@ async function encryptAES() {
             body: JSON.stringify({
                 text: text,
                 key: key,
+                key_type: keyType,
                 mode: mode,
                 padding: padding,
                 key_size: keySize,
@@ -386,6 +388,7 @@ async function encryptAES() {
 async function decryptAES() {
     const text = document.getElementById('aesInput').value;
     const key = document.getElementById('aesKey').value;
+    const keyType = document.getElementById('aesKeyType').value;
     const mode = document.getElementById('aesMode').value;
     const padding = document.getElementById('aesPadding').value;
     const keySize = document.getElementById('aesKeySize').value;
@@ -399,6 +402,7 @@ async function decryptAES() {
             body: JSON.stringify({
                 text: text,
                 key: key,
+                key_type: keyType,
                 mode: mode,
                 padding: padding,
                 key_size: keySize,
