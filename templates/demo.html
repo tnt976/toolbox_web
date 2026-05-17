@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block title %}Demo - Flask Web App{% endblock %}
+
+{% block content %}
+<section class="demo">
+    <div class="container">
+        <h1>Interactive Demo</h1>
+        <p>Try our simple greeting API. Enter your name below and see the response!</p>
+        
+        <div class="demo-form">
+            <form id="greetForm">
+                <div class="form-group">
+                    <label for="name">Your Name:</label>
+                    <input type="text" id="name" name="name" required placeholder="Enter your name">
+                </div>
+                <button type="submit" class="btn">Say Hello!</button>
+            </form>
+            
+            <div id="response" class="response hidden">
+                <h3>Response:</h3>
+                <p id="responseText"></p>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
