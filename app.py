@@ -249,7 +249,6 @@ def aes_encrypt():
     key_size = int(data.get('key_size', 128))
     encoding = data.get('encoding', 'UTF-8')
     output_format = data.get('output_format', 'Base64')
-<<<<<<< HEAD
     key_type = data.get('key_type', 'Text')
 
     try:
@@ -314,7 +313,6 @@ def aes_decrypt():
     key_size = int(data.get('key_size', 128))
     encoding = data.get('encoding', 'UTF-8')
     input_format = data.get('input_format', 'Base64')
-<<<<<<< HEAD
     key_type = data.get('key_type', 'Text')
 
     try:
