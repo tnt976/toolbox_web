@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block title %}Home - Flask Web App{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <div class="container">
+        <h1>Welcome to Flask Web App</h1>
+        <p>A simple yet powerful Python web application demonstrating modern web development best practices.</p>
+        <a href="/demo" class="btn">Try the Demo</a>
+    </div>
+</section>
+
+<section class="features">
+    <div class="container">
+        <h2>Core Features</h2>
+        <div class="feature-grid">
+            <div class="feature-card">
+                <div class="feature-icon">🚀</div>
+                <h3>Fast & Lightweight</h3>
+                <p>Built with Flask, a micro web framework that's fast and easy to use.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">📱</div>
+                <h3>Responsive Design</h3>
+                <p>Works seamlessly on desktop, tablet, and mobile devices.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🔧</div>
+                <h3>Easy to Customize</h3>
+                <p>Clean code structure that's simple to extend and modify.</p>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
